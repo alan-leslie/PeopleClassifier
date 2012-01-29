@@ -20,14 +20,12 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
 
     private List<TextDataItem> dataEntries = null;
     FastVector allAttributes = null;
-    int numAttributes = 0;
     Collection<Tag> allTags = null;
 
     public WEKAPredictiveBlogDataSetCreatorImpl(String dataDir,
             List<RetrievedDataEntry> theData) throws Exception {
         super(dataDir, theData);
         allAttributes = null;
-        numAttributes = 0;
         allTags = null;
 
         if (theData == null) {
@@ -92,41 +90,16 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
         }
     }
 
-//    private List<TextDataItem> createLearningDataSet(boolean isContinuous) throws Exception {
-//        String [] positiveTags = { "collective intelligence", "data mining", "web 2.0"};
-//        String [] negativeTags = { "child intelligence", "AJAX"};
-//        return createLearningDataSet(positiveTags, negativeTags, isContinuous);
-//    }
-//    private List<TextDataItem> createLearningDataSet(String [] positiveTags, String [] negativeTags,
-//            boolean isContinuous) throws Exception {
-//        List<TextDataItem> data = new ArrayList<TextDataItem>();
-//        // todo surely this is just taken from subclass
-////        for (String tag: positiveTags) {
-////            data.addAll(getBlogData(tag, true));
-////        }
-////        for (String tag: negativeTags) {
-////            data.addAll(getBlogData(tag, false));
-////        }
-//        return data;
-//    }
-//    private List<TextDataItem> getBlogData(String tag, boolean isRelevant)
-//        throws Exception {
-//        BlogQueryResult bqrCI = getBlogsFromTechnorati(tag);
-//        return  getBlogTagMagnitudeVectors(bqrCI,isRelevant);
-//    }
-//    protected List<TextDataItem> getDataTagMagnitudeVectors() throws IOException {
-//        List<TextDataItem> tdiList = super.getBlogTagMagnitudeVectors(blogQueryResult);
-//        for (TextDataItem dataItem: tdiList) {
-//            dataItem.setCiRelated(isRelevant);
-//        }
-//        return tdiList;
-//    }
+    // just create a learning data set but use all yhe tag data
+    // so a set of the first 100 instances
+    // afterwards create a prediction data set
+    // then iterate over the prediction data set 
     public Instances createLearningDataSet(String datasetName, boolean isContinuous) throws Exception {
         allTags = this.getAllTags();
         allAttributes = createAttributes(isContinuous);
         Instances trainingDataSet = new Instances(datasetName,
                 allAttributes, dataEntries.size());
-        numAttributes = allAttributes.size();
+        int numAttributes = allAttributes.size();
         System.out.println("Number attributes =" + numAttributes);
 
         for (TextDataItem dataItem : dataEntries) {
@@ -143,14 +116,14 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
     // postcon return value has same num as allTags plus one
     protected FastVector createAttributes(boolean isContinuous) {
 //        Collection<Tag> allTags = this.getAllTags();
-        FastVector allAttributes = new FastVector(allTags.size());
+        FastVector allTheAttributes = new FastVector(allTags.size());
         for (Tag tag : allTags) {
             Attribute tagAttribute = createAttribute(tag.getDisplayText(), isContinuous);
-            allAttributes.addElement(tagAttribute);
+            allTheAttributes.addElement(tagAttribute);
         }
         Attribute classificationAttribute = createAttribute("ClassificationAttribute", isContinuous);
-        allAttributes.addElement(classificationAttribute);
-        return allAttributes;
+        allTheAttributes.addElement(classificationAttribute);
+        return allTheAttributes;
     }
 
     private Attribute createAttribute(String attributeName, boolean isContinuous) {
@@ -173,7 +146,7 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
     
     protected Instance reCreateInstance(Instances trainingDataSet, Collection<Tag> allTags,
             TextDataItem dataItem, boolean isContinuous) {
-        Instance instance = new SparseInstance(numAttributes);
+        Instance instance = new SparseInstance(allAttributes.size());
         instance.setDataset(trainingDataSet);
         int index = 0;
                
@@ -200,7 +173,7 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
     // precon allTags is set up
     protected Instance createNewInstance(Instances trainingDataSet, 
             TextDataItem dataItem, boolean isContinuous) {
-        Instance instance = new SparseInstance(numAttributes);
+        Instance instance = new SparseInstance(allAttributes.size());
         instance.setDataset(trainingDataSet);
         int index = 0;
                
@@ -215,7 +188,7 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
                 setInstanceValue(instance, index++, 0., isContinuous);
             }
         }
-//        BlogAnalysisDataItem blog = (BlogAnalysisDataItem) dataItem;
+
         if (dataItem.isPerson()) {
             setInstanceValue(instance,index, 1., isContinuous);
         } else {
@@ -240,7 +213,6 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
         WEKAPredictiveBlogDataSetCreatorImpl dataSetCreator =
                 new WEKAPredictiveBlogDataSetCreatorImpl("/home/al/wiki_scots/crawl-small/processed/", null);
 
-//        WEKAPredictiveBlogDataSetCreatorImpl dataCreator = new WEKAPredictiveBlogDataSetCreatorImpl();
         Instances discreteDataSet = dataSetCreator.createLearningDataSet("nominalBlogData", false);
         System.out.println(discreteDataSet.toSummaryString());
 //        Instances continuousDataSet = dataCreator.createLearningDataSet("continuousBlogData",true);

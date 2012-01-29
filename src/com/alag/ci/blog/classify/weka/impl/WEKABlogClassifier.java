@@ -67,17 +67,13 @@ public class WEKABlogClassifier {
             Classifier classifier,
             int index) throws Exception {
         double classification = classifier.classifyInstance(instance);
-//        TextDataItem theItem = dataSetCreator.getItemAt(index);
-//        if(theItem != null){
-//            System.out.println("Item: " + theItem.getData().getUrl() + " is person = " + theItem.isPerson());
-//        }
         System.out.println("Classification = " + classification);
     }
  
     protected Classifier getClassifier(Instances instances,
          Algorithm algorithm) throws Exception {
         Classifier classifier = getClassifier(algorithm);
-        //last attribute is used for classification
+        //NOTE - last attribute is used for classification
         instances.setClassIndex(instances.numAttributes() - 1);
         classifier.buildClassifier(instances);
         return classifier;
@@ -98,16 +94,16 @@ public class WEKABlogClassifier {
     
     private void predictUnknownCases(Instances learningDataset, Classifier predictiveModel) 
         throws Exception {
-        Instance testMaleInstance = 
-            createInstance(learningDataset,32., "male", 0) ;
-//        Instance testFemaleInstance = 
-//            createInstance(learningDataset,32., "female", 0) ;
-        double malePrediction = 
-            predictiveModel.classifyInstance(testMaleInstance);
-//        double femalePrediction = 
-//            predictiveModel.classifyInstance(testFemaleInstance);
-        System.out.println("Predicted number of logins [age=32]: ");
-        System.out.println("\tMale = " + malePrediction);
+//        Instance testMaleInstance = 
+//            createInstance(learningDataset,32., "male", 0) ;
+////        Instance testFemaleInstance = 
+////            createInstance(learningDataset,32., "female", 0) ;
+//        double malePrediction = 
+//            predictiveModel.classifyInstance(testMaleInstance);
+////        double femalePrediction = 
+////            predictiveModel.classifyInstance(testFemaleInstance);
+//        System.out.println("Predicted number of logins [age=32]: ");
+//        System.out.println("\tMale = " + malePrediction);
 //        System.out.println("\tFemale = " + femalePrediction);
     }
            
