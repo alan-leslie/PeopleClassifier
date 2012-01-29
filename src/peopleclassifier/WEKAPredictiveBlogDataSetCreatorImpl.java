@@ -5,7 +5,7 @@ import java.util.*;
 
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.FastVector;
+import weka.core.FastVector;  // deprecated so need to find out what to use now
 import weka.core.Attribute;
 
 //import com.alag.ci.blog.search.BlogQueryResult;
