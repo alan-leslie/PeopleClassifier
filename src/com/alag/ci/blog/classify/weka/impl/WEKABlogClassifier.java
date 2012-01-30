@@ -2,6 +2,9 @@ package com.alag.ci.blog.classify.weka.impl;
 
 import java.util.Enumeration;
 
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import peopleclassifier.TextDataItem;
 import peopleclassifier.WEKAPredictiveBlogDataSetCreatorImpl;
 import weka.classifiers.Classifier;
@@ -19,14 +22,21 @@ public class WEKABlogClassifier {
     public enum Algorithm  {DECISION_TREE, NAIVE_BAYES, BAYES_NET,
         LINEAR_REGRESSION, MLP, RBF};
     
+    
+    private boolean isContinuous = false;
+    Classifier classifier = null;
+    Instances instances = null;
+    
     WEKAPredictiveBlogDataSetCreatorImpl dataSetCreator = null;
     
     public void classify(Algorithm algorithm) throws Exception {
-        Instances instances = createLearningDataset();
-        Classifier classifier = getClassifier(instances,algorithm);
+        instances = createLearningDataset();
+        classifier = getClassifier(instances,algorithm);
         evaluateModel(instances, classifier);
         
 //        predictUnknownCases(instances, classifier);
+        
+        
 
         // todo - weka tutorial is as below
         // need to do something similar
@@ -41,13 +51,52 @@ public class WEKABlogClassifier {
 //        Evaluation evaluation = evaluatePredictiveModel(predictiveModel,  learningDataset);
 //        System.out.println(evaluation.toSummaryString());
 //        predictUnknownCases(learningDataset,predictiveModel);
+        J48 theClassifier = null;
+        
+        try{
+            theClassifier = (J48)classifier;
+        } catch(ClassCastException theEx) {
+            
+        }
+        
+        if(theClassifier != null){
+            System.out.println(theClassifier.graph());
+        }
    //     plotData(learningDataset, predictiveModel);
+    }
+    
+    private void retest(int i) {
+        List<TextDataItem> testData = dataSetCreator.getDataItems();
+        
+        for(TextDataItem theItem: testData){
+            String theURL = theItem.getData().getUrl();
+            double isPerson = 1.0;
+            
+            if(theItem.isPerson()){
+                isPerson = 0.0;
+            }
+            
+            Instance theInstance = dataSetCreator.reCreateInstance(instances, theItem, isContinuous);
+            try {
+                double classification = classifier.classifyInstance(theInstance);
+                
+                if(classification == isPerson){
+                    System.out.println("URL: " + theURL + " is correct as: " + Double.toString(classification));                 
+                } else {
+                    System.out.println("URL: " + theURL + " is INCORRECT: " + Double.toString(classification));                 
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(WEKABlogClassifier.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+
     }
     
     protected Instances createLearningDataset() throws Exception {
         dataSetCreator = 
             new WEKAPredictiveBlogDataSetCreatorImpl("/home/al/wiki_scots/crawl-small/processed/", null);
-        return dataSetCreator.createLearningDataSet("LearningData", false);
+        return dataSetCreator.createLearningDataSet("LearningData", isContinuous);
     }
     
     protected void evaluateModel(Instances instances, Classifier classifier) 
@@ -55,17 +104,14 @@ public class WEKABlogClassifier {
         Evaluation modelEval = new Evaluation(instances);
         modelEval.evaluateModel(classifier, instances);
         System.out.println(modelEval.toSummaryString("\nResults\n", true));
-       // System.out.println(((J48)classifier).graph());
-        int i = 0;
+    
         for (Enumeration e = instances.enumerateInstances() ; e.hasMoreElements() ;) {
-            printInstancePrediction((Instance)e.nextElement(),classifier, i);
-            ++i;
+            printInstancePrediction((Instance)e.nextElement(),classifier);
         }
     }
     
     protected void printInstancePrediction(Instance instance, 
-            Classifier classifier,
-            int index) throws Exception {
+            Classifier classifier) throws Exception {
         double classification = classifier.classifyInstance(instance);
         System.out.println("Classification = " + classification);
     }
@@ -120,7 +166,9 @@ public class WEKABlogClassifier {
     
     public static void main(String [] args) throws Exception {
         WEKABlogClassifier c = new WEKABlogClassifier();
-        c.classify(Algorithm.DECISION_TREE);
+        c.classify(Algorithm.BAYES_NET);
+        c.retest(20);
+//        c.classify(Algorithm.RBF);
     }
 
 }

@@ -144,7 +144,7 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
         return new Attribute(attributeName);
     }
     
-    protected Instance reCreateInstance(Instances trainingDataSet, Collection<Tag> allTags,
+    public Instance reCreateInstance(Instances trainingDataSet,
             TextDataItem dataItem, boolean isContinuous) {
         Instance instance = new SparseInstance(allAttributes.size());
         instance.setDataset(trainingDataSet);
@@ -207,6 +207,10 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
                 instance.setValue(index, "false");
             }
         }
+    }
+    
+    public List<TextDataItem> getDataItems(){
+        return dataEntries;
     }
 
     public static void main(String[] args) throws Exception {
