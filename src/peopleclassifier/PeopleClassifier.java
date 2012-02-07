@@ -17,10 +17,9 @@ public class PeopleClassifier {
      */
     public static void main(String [] args) {
         try {
-            WEKABlogClassifier c = new WEKABlogClassifier();
-            c.classify(Algorithm.DECISION_TREE);
-            c.retest();
-    //        c.classify(Algorithm.RBF);
+            WEKABlogClassifier c = new WEKABlogClassifier("/home/al/wiki_scots/crawl-small/processed/");
+            c.classify(Algorithm.DECISION_TREE); //NAIVE_BAYES); //
+            c.classifyAll("/home/al/wiki_scots/crawl-1328562253594/processed/");
         } catch (Exception ex) {
             Logger.getLogger(PeopleClassifier.class.getName()).log(Level.SEVERE, null, ex);
         }

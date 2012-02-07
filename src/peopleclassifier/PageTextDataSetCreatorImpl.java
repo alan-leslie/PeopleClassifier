@@ -40,10 +40,10 @@ public class PageTextDataSetCreatorImpl implements DataSetCreator {
     @Override
     public List<TextDataItem> createLearningData()
             throws Exception {
-        if(theData == null){
+        if (theData == null) {
             theData = getData();
         }
-        
+
         return getTagMagnitudeVectors(theData);
     }
 
@@ -55,20 +55,20 @@ public class PageTextDataSetCreatorImpl implements DataSetCreator {
         Collection<Tag> retVal = new ArrayList<Tag>();
 
         Collection<Tag> theTags = tagCache.getAllTags();
-        for(Tag theTag: theTags){
+        for (Tag theTag : theTags) {
             double thePctFreq = freqEstimator.estimateDocFreqPercent(theTag);
             System.out.println("Tag: " + theTag + " = " + Double.toString(thePctFreq));
-            
-            if(thePctFreq > 10.0 &&
-                    thePctFreq < 60.0){
-              retVal.add(theTag);  
+
+            if (thePctFreq > 10.0
+                    && thePctFreq < 60.0) {
+                retVal.add(theTag);
             }
         }
-        
-        int noOfRelevant = retVal.size();     
+
+        int noOfRelevant = retVal.size();
         return retVal;
     }
-        
+
     private List<RetrievedDataEntry> getData() {
         List<RetrievedDataEntry> retVal = new ArrayList<RetrievedDataEntry>();
         File dir = new File(dataDir);
@@ -86,12 +86,13 @@ public class PageTextDataSetCreatorImpl implements DataSetCreator {
                 File subDir = new File(txtSubDirName);
 
                 FilenameFilter filter = new FilenameFilter() {
+
                     @Override
                     public boolean accept(File dir, String name) {
                         return name.endsWith(".txt");
                     }
                 };
-                
+
                 String[] thePages = subDir.list(filter);
                 if (thePages == null) {
                     // Either subdir does not exist or is not a directory
@@ -101,7 +102,7 @@ public class PageTextDataSetCreatorImpl implements DataSetCreator {
                         try {
                             String txtFileNameWOExt = thePage.substring(0, (thePage.length() - 4));
                             RetrievedDataEntry newPage = new CrawlerPage(subDirName, txtFileNameWOExt, true);
-                            retVal.add(newPage);                            
+                            retVal.add(newPage);
                         } catch (IOException ex) {
                             Logger.getLogger(PageTextDataSetCreatorImpl.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -128,21 +129,21 @@ public class PageTextDataSetCreatorImpl implements DataSetCreator {
                 freqEstimator.addCount(tm.getTag());
             }
         }
-        
+
         System.out.println("No of tags is:" + Integer.toString(freqEstimator.noOfTags()));
         System.out.println("No of tags is:" + Integer.toString(getRelevantTags().size()));
 //        System.out.println("Frequencies");
 //        freqEstimator.outputFrequencies();
         System.out.println("");
-        
+
         for (RetrievedDataEntry thePage : theData) {
             String text = thePage.getText();
             TagMagnitudeVector tmv = textAnalyzer.createTagMagnitudeVector(text);
-                        System.out.println(tmv);
+            System.out.println(tmv);
 
-            result.add(getPageTextAnalysisDataItem((RetrievedDataEntry)thePage, tmv));
+            result.add(getPageTextAnalysisDataItem((RetrievedDataEntry) thePage, tmv));
         }
-        
+
         return result;
     }
 
@@ -150,7 +151,6 @@ public class PageTextDataSetCreatorImpl implements DataSetCreator {
             TagMagnitudeVector tmv) {
         return new DataEntryDataItem(thePage, tmv);
     }
-
     // todo rcreate test include
     // unicode to ascii conversion e.g. %29 = )? in http://en.wikipedia.org/wiki/Colin_Campbell_%28Swedish_East_India_Company%29
     // &#160; should convert to space
