@@ -95,7 +95,7 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
     // afterwards create a prediction data set
     // then iterate over the prediction data set 
     public Instances createLearningDataSet(String datasetName, boolean isContinuous) throws Exception {
-        allTags = this.getAllTags();
+        allTags = this.getRelevantTags(); //.getAllTags();
         allAttributes = createAttributes(isContinuous);
         Instances trainingDataSet = new Instances(datasetName,
                 allAttributes, dataEntries.size());
@@ -215,7 +215,7 @@ public class WEKAPredictiveBlogDataSetCreatorImpl extends PageTextDataSetCreator
 
     public static void main(String[] args) throws Exception {
         WEKAPredictiveBlogDataSetCreatorImpl dataSetCreator =
-                new WEKAPredictiveBlogDataSetCreatorImpl("/home/al/wiki_scots/crawl-small/processed/", null);
+                new WEKAPredictiveBlogDataSetCreatorImpl("/home/al/wiki_scots/crawl-1328562253594/processed/", null);
 
         Instances discreteDataSet = dataSetCreator.createLearningDataSet("nominalBlogData", false);
         System.out.println(discreteDataSet.toSummaryString());

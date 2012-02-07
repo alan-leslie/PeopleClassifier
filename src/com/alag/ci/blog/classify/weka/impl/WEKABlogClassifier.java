@@ -16,8 +16,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SparseInstance;
 
-//import com.alag.ci.blog.dataset.impl.WEKAPredictiveBlogDataSetCreatorImpl;
-
 public class WEKABlogClassifier {
     public enum Algorithm  {DECISION_TREE, NAIVE_BAYES, BAYES_NET,
         LINEAR_REGRESSION, MLP, RBF};
@@ -65,7 +63,7 @@ public class WEKABlogClassifier {
    //     plotData(learningDataset, predictiveModel);
     }
     
-    private void retest(int i) {
+    public void retest() {
         List<TextDataItem> testData = dataSetCreator.getDataItems();
         
         for(TextDataItem theItem: testData){
@@ -81,7 +79,7 @@ public class WEKABlogClassifier {
                 double classification = classifier.classifyInstance(theInstance);
                 
                 if(classification == isPerson){
-                    System.out.println("URL: " + theURL + " is correct as: " + Double.toString(classification));                 
+//                    System.out.println("URL: " + theURL + " is correct as: " + Double.toString(classification));                 
                 } else {
                     System.out.println("URL: " + theURL + " is INCORRECT: " + Double.toString(classification));                 
                 }
@@ -152,23 +150,4 @@ public class WEKABlogClassifier {
 //        System.out.println("\tMale = " + malePrediction);
 //        System.out.println("\tFemale = " + femalePrediction);
     }
-           
-    private Instance createInstance(Instances associatedDataSet,
-            double age, String gender, int numLogins) {
-        // Create empty instance with three attribute values
-        Instance instance = new SparseInstance(3);
-        instance.setDataset(associatedDataSet);
-        instance.setValue(0, age);
-        instance.setValue(1, gender);
-        instance.setValue(2, numLogins);
-        return instance;
-    }
-    
-    public static void main(String [] args) throws Exception {
-        WEKABlogClassifier c = new WEKABlogClassifier();
-        c.classify(Algorithm.BAYES_NET);
-        c.retest(20);
-//        c.classify(Algorithm.RBF);
-    }
-
 }
