@@ -1,6 +1,7 @@
-ciia, collective intelligence in action
-north atlantic treaty organisation, NATO
-north atlantic treaty organization, NATO
-js, javascript
 was a scottish, IsAScot
 is a scottish, IsAScot
+was a prolific scottish, IsAScot
+date of birth, born
+date of baptism, born
+baptised, born
+b., born

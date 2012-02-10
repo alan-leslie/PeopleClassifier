@@ -45,10 +45,12 @@ public final class LuceneTextAnalyzer implements TextAnalyzer {
                 
                 if(indexOfHyphen2 < 0){
                     String thePeriodString = theText.substring(indexOfOpenBracket, indexOfCloseBracket + 1);
-                    theText = theText.replace(thePeriodString, " xperiodx");
+                    theText = theText.replace(thePeriodString, thePeriodString + " xperiodx ");
+//                    theText = theText.replace(thePeriodString, " xperiodx ");
                 } else {
                     String thePeriodString = theText.substring(indexOfOpenBracket, indexOfCloseBracket + 1);
-                    theText = theText.replace(thePeriodString, " xdatax");                   
+//                    theText = theText.replace(thePeriodString, thePeriodString + " xdatex ");                   
+                    theText = theText.replace(thePeriodString, " xdatex ");
                 }
             }
             

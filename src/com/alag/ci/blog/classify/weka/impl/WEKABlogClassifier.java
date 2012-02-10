@@ -70,7 +70,8 @@ public class WEKABlogClassifier {
         //     plotData(learningDataset, predictiveModel);
     }
 
-    public void classifyAll(String fullDataDir) {
+    public List<String> classifyAll(String fullDataDir) {
+        List<String> retVal = new ArrayList<String>();
         PageTextDataSetCreatorImpl pt = new PageTextDataSetCreatorImpl(fullDataDir, null);
         List<TextDataItem> testData = new ArrayList<TextDataItem>();
 
@@ -94,6 +95,7 @@ public class WEKABlogClassifier {
                 double classification = classifier.classifyInstance(theInstance);
                 boolean bClassification = false;
                 if(classification == 0.0){
+                    retVal.add(theURL);
                     bClassification = true;
                 }
 
@@ -107,7 +109,8 @@ public class WEKABlogClassifier {
             }
 
         }
-
+        
+        return retVal;
     }
 
     protected Instances createLearningDataset(String trainingDataDir) throws Exception {
