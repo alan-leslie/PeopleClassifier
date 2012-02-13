@@ -1,0 +1,5 @@
+Classifies web pages (as person or not) using the data gathered from PeopleCrawler
+Uses: 
+WEKA naive bayes 
+Adapted from collective intelligence in action
+
